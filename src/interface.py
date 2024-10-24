@@ -17,19 +17,23 @@ class Interface():
         padding = 5
         position += 5
         h_pos = padding + self.resolution[1]/25+20
-
+        buttons = []
         for i in range(8):
-            pygame.draw.rect(self.screen, colors.light_brown, (position, h_pos,
+            rect = pygame.draw.rect(self.screen, colors.light_brown, (position, h_pos,
                              self.resolution[0]/16 - 2 * padding, self.resolution[0]/16 - 2 * padding), border_radius=5)
             h_pos += padding + self.resolution[0]/16 - 2 * padding
+            buttons.append(rect)
+        return buttons
 
     def display_interface(self):
         self.screen.fill(colors.green)
         self.draw_middle_line()
 
         self.draw_status_bar()
-        self.side_bar(0)
+        buttons = self.side_bar(0)
         self.side_bar(self.resolution[0] - self.resolution[0]/16)
+
+        return buttons
 
     def draw_middle_line(self):
         pygame.draw.line(self.screen, colors.brown,
