@@ -1,12 +1,11 @@
 import pygame
 from interface import Interface
 
-RESOLUTION = (1280, 720)
 pygame.init()
 
 clock = pygame.time.Clock()
 running = True
-interface = Interface(resolution=RESOLUTION)
+interface = Interface()
 p1 = 100
 while running:
     for event in pygame.event.get():
