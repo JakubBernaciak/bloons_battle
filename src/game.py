@@ -5,3 +5,4 @@ class Game():
     def __init__(self, p1_name, p2_name):
         self.p1 = Player(p1_name)
         self.p2 = Player(p2_name)
+        self.round = 1
