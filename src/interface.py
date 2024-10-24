@@ -32,9 +32,9 @@ class Interface():
         self.side_bar(self.resolution[0] - self.resolution[0]/16)
 
     def draw_middle_line(self):
-        pygame.draw.line(self.screen, colors.black,
+        pygame.draw.line(self.screen, colors.brown,
                          (self.resolution[0]/2, 0), (self.resolution[0]/2, self.resolution[1]), 30)
-        pygame.draw.line(self.screen, colors.grey,
+        pygame.draw.line(self.screen, colors.dark_brown,
                          (self.resolution[0]/2, 0), (self.resolution[0]/2, self.resolution[1]), 24)
 
     def draw_status_bar(self):
