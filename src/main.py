@@ -1,7 +1,7 @@
 import pygame
 from interface import Interface
 
-RESOLUTION = (1280,720)
+RESOLUTION = (1280, 720)
 pygame.init()
 
 clock = pygame.time.Clock()
