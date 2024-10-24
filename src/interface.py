@@ -1,16 +1,21 @@
 import pygame
 import colors
+import settings
+from game import Game
+from player import Player
 
 
 class Interface():
-    def __init__(self, resolution: tuple):
-        self.resolution = resolution
+    def __init__(self, game: Game):
+        self.resolution = settings.resolution
         self.screen = pygame.display.set_mode(self.resolution)
+        self.game: Game = game
 
-    def display_interface(self, player_one_health):
+    def display_interface(self):
         self.screen.fill(colors.green)
         self.draw_middle_line()
-        self.draw_status_bar(player_one_health)
+
+        self.draw_status_bar()
 
     def draw_middle_line(self):
         pygame.draw.line(self.screen, colors.black,
@@ -18,26 +23,63 @@ class Interface():
         pygame.draw.line(self.screen, colors.grey,
                          (self.resolution[0]/2, 0), (self.resolution[0]/2, self.resolution[1]), 24)
 
-    def draw_status_bar(self, player_one_health):
+    def draw_status_bar(self):
         pygame.draw.rect(self.screen, colors.dark_brown,
                          (0, 0, self.resolution[0], self.resolution[1]/25+20))
-        self.draw_health_bars(player_one_health)
 
-    def draw_health_bars(self, player_one_health):
+        horizontal_padding = 5
+        bar_width = self.resolution[0] * 3/7
+
+        self.draw_health_bar(self.game.p1, horizontal_padding, bar_width)
+
+        position = self.resolution[0] - horizontal_padding - bar_width
+        self.draw_health_bar(self.game.p2, position, bar_width, reversed=True)
+
+        width = self.resolution[0] - (bar_width +
+                                      horizontal_padding) * 2 - 2 * horizontal_padding
+        position = bar_width + 2 * horizontal_padding
+        self.draw_middle_bar(position, width)
+
+    def draw_middle_bar(self, position, width):
+        pygame.draw.rect(self.screen, colors.brown, (position, 10,
+                         width, self.resolution[1]/25), border_radius=255)
+
+        font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 15)
+        font.set_bold(True)
+        text_surface = font.render('Round 1/40', True, (255, 255, 255))
+        text_position = text_surface.get_rect(
+            center=(self.resolution[0]//2, 10 + self.resolution[1]/50))
+        self.screen.blit(text_surface, text_position)
+
+    def draw_health_bar(self, player: Player, position, bar_width, reversed=False):
         upper_padding = 10
         bars_height = self.resolution[1]/25
 
-        cur_color = self.get_health_bar_color(player_one_health)
-        pygame.draw.rect(self.screen, colors.brown, (5, upper_padding,
-                         self.resolution[0] * 3/7, bars_height), border_radius=255)
-        pygame.draw.rect(self.screen, cur_color, (5+5, upper_padding+3,
-                         (self.resolution[0] * 3/7-10) * (player_one_health/100), bars_height-6), border_radius=255)
+        color = self.get_health_bar_color(player.health)
+        pygame.draw.rect(self.screen, colors.brown, (position, upper_padding,
+                         bar_width, bars_height), border_radius=255)
 
-        pygame.draw.rect(self.screen, colors.brown, (
-            self.resolution[0] * 3/7 + 10, upper_padding, self.resolution[0] * 1/7-20, bars_height), border_radius=255)
+        pygame.draw.rect(self.screen, color, (position + 5, upper_padding+3,
+                         (bar_width-10) * (player.health/100), bars_height-6), border_radius=255)
 
-        pygame.draw.rect(self.screen, colors.brown, (
-            self.resolution[0] * 4/7 - 5, upper_padding, self.resolution[0] * 3/7, bars_height), border_radius=255)
+        font = pygame.font.Font('assets/fonts/PressStart2P-Regular.ttf', 15)
+        font.set_bold(True)
+        name = player.name
+        health = f"{player.health}HP"
+
+        text_surface = font.render(
+            health if reversed else name, True, (255, 255, 255))
+        text_position = text_surface.get_rect(
+            center=(position, 10 + self.resolution[1]/50))
+        text_position.left = position + 10
+        self.screen.blit(text_surface, text_position)
+
+        text_surface = font.render(
+            name if reversed else health, True, (255, 255, 255))
+        text_position = text_surface.get_rect(
+            center=(position, 10 + self.resolution[1]/50))
+        text_position.right = position + bar_width - 10
+        self.screen.blit(text_surface, text_position)
 
     def get_health_bar_color(self, health) -> tuple:
         if health > 80:
